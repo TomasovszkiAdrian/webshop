@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Termékek kezelése - Admin{% endblock %}
+
+{% block content %}
+<h2>Termékek kezelése</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Új termék hozzáadása</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('termek_hozzaadas') }}">
+                    <div class="mb-3">
+                        <label for="nev" class="form-label">Termék neve *</label>
+                        <input type="text" class="form-control" id="nev" name="nev" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="leiras" class="form-label">Leírás</label>
+                        <textarea class="form-control" id="leiras" name="leiras" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="ar" class="form-label">Ár (Ft) *</label>
+                        <input type="number" class="form-control" id="ar" name="ar" required min="0" step="1">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="kategoria_id" class="form-label">Kategória</label>
+                        <select class="form-control" id="kategoria_id" name="kategoria_id">
+                            <option value="">Válassz kategóriát</option>
+                            {% for kategoria in kategoriak %}
+                                <option value="{{ kategoria.id }}">{{ kategoria.nev }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="kep_url" class="form-label">Kép URL</label>
+                        <input type="url" class="form-control" id="kep_url" name="kep_url" 
+                               placeholder="https://example.com/kep.jpg">
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Termék hozzáadása</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Meglévő termékek</h5>
+            </div>
+            <div class="card-body">
+                {% if not termekek %}
+                    <p class="text-muted">Még nincsenek termékek az adatbázisban.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Név</th>
+                                    <th>Kategória</th>
+                                    <th>Ár</th>
+                                    <th>Állapot</th>
+                                    <th>Művelet</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for termek in termekek %}
+                                <tr class="{% if not termek.aktiv %}table-secondary{% endif %}">
+                                    <td>{{ termek.id }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if termek.kep_url %}
+                                                <img src="{{ termek.kep_url }}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ termek.nev }}">
+                                            {% endif %}
+                                            <div>
+                                                <strong>{{ termek.nev }}</strong>
+                                                {% if termek.leiras %}
+                                                    <br><small class="text-muted">{{ termek.leiras[:50] }}...</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ termek.kategoria_nev or 'Nincs' }}</td>
+                                    <td>{{ "{:,.0f}".format(termek.ar) }} Ft</td>
+                                    <td>
+                                        {% if termek.aktiv %}
+                                            <span class="badge bg-success">Aktív</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inaktív</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if termek.aktiv %}
+                                            <a href="{{ url_for('termek_torles', termek_id=termek.id) }}" 
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('Biztosan deaktiválni szeretnéd ezt a terméket?')">
+                                                Deaktiválás
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">Deaktivált</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('admin_fooldal') }}" class="btn btn-secondary">Vissza az admin főoldalra</a>
+</div>
+{% endblock %}

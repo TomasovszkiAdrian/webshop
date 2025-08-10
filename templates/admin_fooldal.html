@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Webáruház{% endblock %}
+
+{% block content %}
+<h2>Admin Irányítópult</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ termek_db }}</h4>
+                        <p class="card-text">Aktív termékek</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-boxes fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ rendeles_db }}</h4>
+                        <p class="card-text">Összes rendelés</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-shopping-cart fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ "{:,.0f}".format(ossz_bevetel) }} Ft</h4>
+                        <p class="card-text">Összes bevétel</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Gyors műveletek</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('admin_termekek') }}" class="btn btn-primary mb-2 d-block">
+                    Termékek kezelése
+                </a>
+                <a href="{{ url_for('fooldal') }}" class="btn btn-secondary d-block">
+                    Webáruház megtekintése
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Legutóbbi rendelések</h5>
+            </div>
+            <div class="card-body">
+                {% if not utolso_rendelesek %}
+                    <p class="text-muted">Még nincsenek rendelések.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Vásárló</th>
+                                    <th>Összeg</th>
+                                    <th>Dátum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rendeles in utolso_rendelesek %}
+                                <tr>
+                                    <td>{{ rendeles.id }}</td>
+                                    <td>{{ rendeles.felhasznalo_nev }}</td>
+                                    <td>{{ "{:,.0f}".format(rendeles.osszeg) }} Ft</td>
+                                    <td>{{ rendeles.rendeles_datum.strftime('%m-%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

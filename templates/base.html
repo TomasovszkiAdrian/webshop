@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Webáruház{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-image { height: 200px; object-fit: cover; }
+        .navbar-brand { font-weight: bold; }
+        .footer { background-color: #f8f9fa; margin-top: 50px; }
+        .card-img-top { height: 200px; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <!-- Navigációs sáv -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('fooldal') }}">🛒 Webáruház</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('fooldal') }}">Főoldal</a>
+                    </li>
+                    {% if session.admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_fooldal') }}">Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('kosar') }}">
+                            🛒 Kosár 
+                            {% if session.kosár %}
+                                <span class="badge bg-warning">{{ session.kosár.values() | sum }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    
+                    {% if session.felhasznalo_id %}
+                        <li class="nav-item">
+                            <span class="navbar-text me-3">Üdv, {{ session.felhasznalo_nev }}!</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('kijelentkezes') }}">Kijelentkezés</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('bejelentkezes') }}">Bejelentkezés</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('regisztracio') }}">Regisztráció</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash üzenetek -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Fő tartalom -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Lábléc -->
+    <footer class="footer mt-5 py-4 text-center">
+        <div class="container">
+            <p>&copy; 2024 Webáruház. Minden jog fenntartva.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

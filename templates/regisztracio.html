@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Regisztráció - Webáruház{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Regisztráció</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="nev" class="form-label">Teljes név</label>
+                        <input type="text" class="form-control" id="nev" name="nev" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail cím</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="jelszo" class="form-label">Jelszó</label>
+                        <input type="password" class="form-control" id="jelszo" name="jelszo" required>
+                        <div class="form-text">Minimum 6 karakter</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="jelszo_megerosites" class="form-label">Jelszó megerősítése</label>
+                        <input type="password" class="form-control" id="jelszo_megerosites" name="jelszo_megerosites" required>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Regisztráció</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p>Van már fiókod? <a href="{{ url_for('bejelentkezes') }}">Bejelentkezés</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Kosár - Webáruház{% endblock %}
+
+{% block content %}
+<h2>Kosaram</h2>
+
+{% if not kosar_tetelek %}
+    <div class="alert alert-info">
+        <h4>A kosár üres</h4>
+        <p>Még nem adtál hozzá terméket a kosárhoz.</p>
+        <a href="{{ url_for('fooldal') }}" class="btn btn-primary">Vásárlás folytatása</a>
+    </div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Termék</th>
+                    <th>Ár</th>
+                    <th>Mennyiség</th>
+                    <th>Összesen</th>
+                    <th>Művelet</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tetel in kosar_tetelek %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if tetel.termek.kep_url %}
+                                <img src="{{ tetel.termek.kep_url }}" class="me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="{{ tetel.termek.nev }}">
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0">{{ tetel.termek.nev }}</h6>
+                                <small class="text-muted">{{ tetel.termek.leiras[:50] }}...</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ "{:,.0f}".format(tetel.termek.ar) }} Ft</td>
+                    <td>{{ tetel.mennyiseg }} db</td>
+                    <td><strong>{{ "{:,.0f}".format(tetel.tetel_osszeg) }} Ft</strong></td>
+                    <td>
+                        <a href="{{ url_for('kosar_torles', termek_id=tetel.termek.id) }}" 
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Biztosan törölni szeretnéd ezt a terméket a kosárból?')">
+                            Törlés
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="table-active">
+                    <td colspan="3"><strong>Végösszeg:</strong></td>
+                    <td><strong class="h5 text-success">{{ "{:,.0f}".format(osszeg) }} Ft</strong></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="{{ url_for('fooldal') }}" class="btn btn-secondary">Vásárlás folytatása</a>
+        </div>
+        <div class="col-md-6 text-end">
+            {% if session.felhasznalo_id %}
+                <form method="POST" action="{{ url_for('rendeles_leadasa') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-success btn-lg"
+                            onclick="return confirm('Biztosan le szeretnéd adni a rendelést?')">
+                        Rendelés leadása
+                    </button>
+                </form>
+            {% else %}
+                <p class="text-muted mb-2">A rendelés leadásához jelentkezz be!</p>
+                <a href="{{ url_for('bejelentkezes') }}" class="btn btn-primary">Bejelentkezés</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

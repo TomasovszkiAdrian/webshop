@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Termékek</h1>
+<form method="get">
+  <label>Kategória: <select name="category"><option value="">-- Mind --</option>{% for c in categories %}<option value="{{c.id}}" {% if selected and selected==c.id %}selected{% endif %}>{{c.name}}</option>{% endfor %}</select></label>
+  <button>Szűr</button>
+</form>
+<div>
+{% for p in products %}
+  <div class="product">
+    <h3>{{p.name}}</h3>
+    <p>{{p.description}}</p>
+    <p>Ár: {{p.price}} HUF</p>
+    <form action="/add_to_cart" method="post">
+      <input type="hidden" name="product_id" value="{{p.id}}">
+      <input type="number" name="qty" value="1" min="1" style="width:50px"> <button>Kosárba</button>
+    </form>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

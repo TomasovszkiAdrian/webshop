@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Főoldal - Webáruház{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <h5>Kategóriák</h5>
+        <div class="list-group">
+            <a href="{{ url_for('fooldal') }}" 
+               class="list-group-item list-group-item-action {% if not kivalasztott_kategoria or kivalasztott_kategoria == 'osszes' %}active{% endif %}">
+                Összes termék
+            </a>
+            {% for kategoria in kategoriak %}
+            <a href="{{ url_for('fooldal', kategoria=kategoria.id) }}" 
+               class="list-group-item list-group-item-action {% if kivalasztott_kategoria|string == kategoria.id|string %}active{% endif %}">
+                {{ kategoria.nev }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <h2>Termékeink</h2>
+        {% if not termekek %}
+            <div class="alert alert-info">
+                <h4>Nincs megjeleníthető termék</h4>
+                <p>Jelenleg nincs termék a kiválasztott kategóriában.</p>
+            </div>
+        {% else %}
+            <div class="row">
+                {% for termek in termekek %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if termek.kep_url %}
+                            <img src="{{ termek.kep_url }}" class="card-img-top" alt="{{ termek.nev }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ termek.nev }}</h5>
+                            <p class="card-text">{{ termek.leiras[:100] }}{% if termek.leiras|length > 100 %}...{% endif %}</p>
+                            <p class="card-text">
+                                <small class="text-muted">{{ termek.kategoria_nev or 'Kategória nélkül' }}</small>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-primary">{{ "{:,.0f}".format(termek.ar) }} Ft</span>
+                                <a href="{{ url_for('kosarba', termek_id=termek.id) }}" class="btn btn-success">
+                                    Kosárba
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
