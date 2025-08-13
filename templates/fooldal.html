@@ -45,9 +45,17 @@
                         <div class="card-footer">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="h5 text-primary">{{ "{:,.0f}".format(termek.ar) }} Ft</span>
-                                <a href="{{ url_for('kosarba', termek_id=termek.id) }}" class="btn btn-success">
-                                    Kosárba
-                                </a>
+                                <form action="{{ url_for('kosarba', termek_id=termek.id) }}" method="post" class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center mb-2">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                onclick="var input=this.parentNode.querySelector('input[name=mennyiseg]'); input.stepDown();">-</button>
+                                        <input type="number" name="mennyiseg" value="1" min="1"
+                                               class="form-control form-control-sm mx-1 text-center" style="width:50px;">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                onclick="var input=this.parentNode.querySelector('input[name=mennyiseg]'); input.stepUp();">+</button>
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-sm w-100">Kosárba</button>
+                                </form>                                
                             </div>
                         </div>
                     </div>

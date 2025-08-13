@@ -47,6 +47,16 @@
                             Törlés
                         </a>
                     </td>
+                    <td>
+                        <form action="{{ url_for('kosar_mennyiseg', termek_id=tetel.termek.id) }}" method="post" class="d-flex align-items-center">
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="var input=this.parentNode.querySelector('input[name=mennyiseg]'); input.stepDown(); this.form.submit();">-</button>
+                            <input type="number" name="mennyiseg" value="{{ tetel.mennyiseg }}" min="1" class="form-control form-control-sm mx-1 text-center" style="width:60px;">
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="var input=this.parentNode.querySelector('input[name=mennyiseg]'); input.stepUp(); this.form.submit();">+</button>
+                        </form>
+                    </td>
+                    
                 </tr>
                 {% endfor %}
             </tbody>

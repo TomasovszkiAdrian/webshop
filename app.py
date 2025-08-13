@@ -293,6 +293,12 @@ def email_kuldese(cimzett, targy, uzenet):
 @app.route('/')
 def fooldal():
     """Főoldal - termékek listázása kategória szűréssel"""
+
+    # 🔒 Bejelentkezés ellenőrzése
+    if 'felhasznalo_id' not in session:
+        flash('Kérjük először jelentkezz be!', 'warning')
+        return redirect(url_for('bejelentkezes'))
+
     connection = get_db_connection()
     if not connection:
         flash('Adatbázis kapcsolódási hiba!', 'danger')
@@ -418,25 +424,43 @@ def kijelentkezes():
     session.clear()
     flash('Sikeresen kijelentkeztél!', 'info')
     return redirect(url_for('fooldal'))
-
-@app.route('/kosarba/<int:termek_id>')
+@app.route('/kosarba/<int:termek_id>', methods=['POST'])
 def kosarba(termek_id):
-    """Termék hozzáadása a kosárhoz"""
+    mennyiseg = int(request.form.get('mennyiseg', 1))
+    if mennyiseg < 1:
+        mennyiseg = 1
+
     if 'kosár' not in session:
         session['kosár'] = {}
-    
-    kosár = session['kosár']
+
+    kosar = session['kosár']
     termek_id_str = str(termek_id)
-    
-    if termek_id_str in kosár:
-        kosár[termek_id_str] += 1
+
+    if termek_id_str in kosar:
+        kosar[termek_id_str] += mennyiseg
     else:
-        kosár[termek_id_str] = 1
-    
-    session['kosár'] = kosár
-    flash('A termék hozzá lett adva a kosárhoz!', 'success')
+        kosar[termek_id_str] = mennyiseg
+
+    session['kosár'] = kosar
+    flash(f'{mennyiseg} db termék hozzáadva a kosárhoz!', 'success')
     return redirect(url_for('fooldal'))
 
+@app.route('/kosar_mennyiseg/<int:termek_id>', methods=['POST'])
+def kosar_mennyiseg(termek_id):
+    uj_mennyiseg = int(request.form.get('mennyiseg', 1))
+
+    if uj_mennyiseg < 1:
+        uj_mennyiseg = 1
+
+    if 'kosár' in session:
+        kosar = session['kosár']
+        termek_id_str = str(termek_id)
+
+        if termek_id_str in kosar:
+            kosar[termek_id_str] = uj_mennyiseg
+            session['kosár'] = kosar
+
+    return redirect(url_for('kosar'))
 @app.route('/kosar')
 def kosar():
     """Kosár tartalmának megjelenítése"""
